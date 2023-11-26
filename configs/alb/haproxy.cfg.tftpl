@@ -1,0 +1,14 @@
+defaults
+  mode http
+  balance roundrobin
+
+frontend bingo
+  bind :80
+  default_backend bingo_servers
+
+backend bingo_servers
+  option httpchk GET /ping
+  http-check expect status 200  
+  %{~ for name, ip in servers ~}
+  server ${name} ${ip}:80 check
+  %{~ endfor ~}

@@ -1,0 +1,11 @@
+services:
+  bingo-server:
+    container_name: bingo-server
+    image: cr.yandex/${YC_CR_REGISTRY}/bingo-server:latest
+    restart: always
+    volumes:
+      - /opt/bingo/config.yaml:/opt/bingo/config.yaml
+      - /var/log/bingo:/opt/bongo/logs/3ab4b81635/
+    ports:
+      - "80:28940"
+

@@ -1,0 +1,39 @@
+services:
+  postgres:
+    container_name: postgres 
+    image: postgres
+    restart: always
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: '${DB_USER}'
+      POSTGRES_PASSWORD: '${DB_PASSWORD}'
+      POSTGRES_DB: '${DB_NAME}'
+  
+  bingo-init:
+    container_name: bingo-init 
+    image: cr.yandex/${YC_CR_REGISTRY}/bingo-init:latest
+    restart: on-failure
+    volumes:
+      - /opt/bingo/config.yaml:/opt/bingo/config.yaml
+    depends_on:
+      - postgres
+
+  pgbouncer:
+    container_name: pgbouncer
+    image: edoburu/pgbouncer
+    restart: always
+    environment:
+      DB_USER: '${DB_USER}'
+      DB_PASSWORD: '${DB_PASSWORD}'
+      DB_HOST: postgres
+      DB_NAME: '${DB_NAME}'
+      AUTH_TYPE: scram-sha-256
+    ports:
+      - "5432:5432"
+    depends_on:
+      bingo-init:
+        condition: service_completed_successfully
+
+volumes:
+  db-data:

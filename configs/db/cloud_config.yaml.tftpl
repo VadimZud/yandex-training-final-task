@@ -1,0 +1,7 @@
+#cloud-config
+write_files:
+  - encoding: b64
+    content: ${b64_bingo_config}
+    owner: root:root
+    path: /opt/bingo/config.yaml
+    permissions: '0644'

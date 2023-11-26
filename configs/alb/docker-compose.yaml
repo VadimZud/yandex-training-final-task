@@ -1,0 +1,9 @@
+services:
+  haproxy:
+    container_name: haproxy
+    image: haproxy
+    restart: always
+    volumes:
+      - /etc/haproxy:/usr/local/etc/haproxy
+    ports:
+      - "80:80"
