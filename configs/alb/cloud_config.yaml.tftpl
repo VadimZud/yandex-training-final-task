@@ -5,3 +5,8 @@ write_files:
     owner: root:root
     path: /etc/haproxy/haproxy.cfg
     permissions: '0644'
+  - encoding: b64
+    content: ${b64_unified_agent_config}
+    owner: root:root
+    path: /etc/yandex/unified_agent.yml
+    permissions: '0644'

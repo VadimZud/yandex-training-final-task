@@ -36,9 +36,10 @@ resource "yandex_resourcemanager_folder_iam_member" "db_instance_roles" {
 }
 
 resource "yandex_compute_instance" "db_instance" {
-  name               = "db-instance"
-  platform_id        = "standard-v2"
-  service_account_id = yandex_iam_service_account.db_instance.id
+  name                      = "db-instance"
+  platform_id               = "standard-v2"
+  service_account_id        = yandex_iam_service_account.db_instance.id
+  allow_stopping_for_update = true
 
   resources {
     cores         = 2

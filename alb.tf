@@ -3,16 +3,39 @@ locals {
     servers = { for app_instance in yandex_compute_instance.app_instance[*] : app_instance.name => app_instance.network_interface[0].ip_address }
   }))
 
+  b64_alb_unified_agent_config = base64encode(templatefile("${path.module}/configs/alb/unified_agent.yml.tftpl", {
+    YC_FOLDER_ID = var.folder_id
+  }))
+
   alb_cloud_config = templatefile("${path.module}/configs/alb/cloud_config.yaml.tftpl", {
-    b64_haproxy_config = local.b64_haproxy_config
+    b64_haproxy_config       = local.b64_haproxy_config
+    b64_unified_agent_config = local.b64_alb_unified_agent_config
   })
 
-  alb_docker_compose_config = file("${path.module}/configs/alb/docker-compose.yaml")
+  alb_docker_compose_config = templatefile("${path.module}/configs/alb/docker-compose.yaml.tftpl", {
+    YC_FOLDER_ID = var.folder_id
+  })
+}
+
+resource "yandex_iam_service_account" "alb_instance" {
+  name = "${var.sa_prefix}bingo-alb-instance"
+}
+
+resource "yandex_resourcemanager_folder_iam_member" "alb_instance_roles" {
+  for_each = toset([
+    "monitoring.editor",
+  ])
+  folder_id = var.folder_id
+  role      = each.key
+  member    = "serviceAccount:${yandex_iam_service_account.alb_instance.id}"
 }
 
 resource "yandex_compute_instance" "alb_instance" {
-  name        = "alb-instance"
-  platform_id = "standard-v2"
+  name                      = "alb-instance"
+  platform_id               = "standard-v2"
+  service_account_id        = yandex_iam_service_account.alb_instance.id
+  allow_stopping_for_update = true
+
 
   resources {
     cores         = 2
@@ -42,6 +65,10 @@ resource "yandex_compute_instance" "alb_instance" {
     user-data      = local.alb_cloud_config
     ssh-keys       = "ubuntu:${file(var.ssh_key)}"
   }
+
+  depends_on = [
+    yandex_resourcemanager_folder_iam_member.alb_instance_roles,
+  ]
 
   lifecycle {
     ignore_changes = [boot_disk[0].initialize_params[0].image_id]

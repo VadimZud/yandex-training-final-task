@@ -1,0 +1,21 @@
+services:
+  haproxy:
+    container_name: haproxy
+    image: haproxy
+    restart: always
+    volumes:
+      - /etc/haproxy:/usr/local/etc/haproxy
+    ports:
+      - "80:80"
+      - "9090:9090"
+
+  unified_agent:
+    container_name: unified_agent
+    image: "cr.yandex/yc/unified-agent"
+    restart: always
+    ports:
+      - "16241:16241"
+    volumes:
+      - /etc/yandex/unified_agent.yml:/etc/yandex/unified_agent/conf.d/config.yml
+    environment:
+      FOLDER_ID: "${YC_FOLDER_ID}"

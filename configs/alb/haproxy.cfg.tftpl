@@ -2,6 +2,11 @@ defaults
   mode http
   balance roundrobin
 
+frontend prometheus
+   bind *:9090
+   http-request use-service prometheus-exporter if { path /metrics }
+   no log
+
 frontend bingo
   bind :80
   default_backend bingo_servers

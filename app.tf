@@ -19,13 +19,12 @@ locals {
 }
 
 resource "yandex_iam_service_account" "app_instance" {
-  name = "${var.sa_prefix}bingo-instance"
+  name = "${var.sa_prefix}bingo-app-instance"
 }
 
 resource "yandex_resourcemanager_folder_iam_member" "app_instance_roles" {
   for_each = toset([
     "container-registry.images.puller",
-    "monitoring.editor",
   ])
   folder_id = var.folder_id
   role      = each.key
@@ -33,9 +32,11 @@ resource "yandex_resourcemanager_folder_iam_member" "app_instance_roles" {
 }
 
 resource "yandex_compute_instance" "app_instance" {
-  name               = "app-instance"
-  platform_id        = "standard-v2"
-  service_account_id = yandex_iam_service_account.app_instance.id
+  name                      = "app-instance"
+  platform_id               = "standard-v2"
+  service_account_id        = yandex_iam_service_account.app_instance.id
+  allow_stopping_for_update = true
+
 
   resources {
     cores         = 2
