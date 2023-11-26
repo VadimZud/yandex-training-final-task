@@ -17,5 +17,5 @@ write_files:
 
 runcmd:
   - [mkdir, -p, /var/log/bingo]
-  - [chown, 65532:65532, /var/log/bingo]
+  - [chown, systemd-network:systemd-journal, /var/log/bingo]
   - [chmod, '0755', /var/log/bingo]
