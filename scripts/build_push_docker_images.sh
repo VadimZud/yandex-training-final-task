@@ -1,3 +1,4 @@
+#!/bin/bash
 INIT_TAG=cr.yandex/$YC_CR_REGISTRY/bingo-init:latest
 SERVER_TAG=cr.yandex/$YC_CR_REGISTRY/bingo-server:latest
 
