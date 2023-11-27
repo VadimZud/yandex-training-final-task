@@ -1,5 +1,6 @@
 resource "random_password" "db_password" {
-  length = 16
+  length           = 16
+  override_special = "!#$%&*()-_=+[]{}<>:?"
 }
 
 locals {
