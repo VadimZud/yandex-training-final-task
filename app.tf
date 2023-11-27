@@ -32,7 +32,9 @@ resource "yandex_resourcemanager_folder_iam_member" "app_instance_roles" {
 }
 
 resource "yandex_compute_instance" "app_instance" {
-  name                      = "app-instance"
+  count = 2
+
+  name                      = "app-instance${count.index}"
   platform_id               = "standard-v2"
   service_account_id        = yandex_iam_service_account.app_instance.id
   allow_stopping_for_update = true
