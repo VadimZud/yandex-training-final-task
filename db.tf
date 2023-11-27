@@ -5,14 +5,20 @@ resource "random_password" "db_password" {
 
 locals {
   b64_bingo_init_config = base64encode(templatefile("${path.module}/configs/bingo/config.yaml.tftpl", {
-    DB_ADDRESS  = "postgres"
+    DB_ADDRESS  = "/var/run/postgresql"
     DB_USER     = var.db_user
     DB_PASSWORD = random_password.db_password.result
     DB_NAME     = var.db_name
   }))
 
+  b64_bingo_prepare_db_sh = filebase64("${path.module}/configs/db/bingo_prepare_db.sh")
+
+  b64_fix_tables_keys_sql = filebase64("${path.module}/configs/db/fix_tables_keys.sql")
+
   db_cloud_config = templatefile("${path.module}/configs/db/cloud_config.yaml.tftpl", {
-    b64_bingo_config = local.b64_bingo_init_config
+    b64_bingo_config        = local.b64_bingo_init_config
+    b64_bingo_prepare_db_sh = local.b64_bingo_prepare_db_sh
+    b64_fix_tables_keys_sql = local.b64_fix_tables_keys_sql
   })
 
   db_docker_compose_config = templatefile("${path.module}/configs/db/docker-compose.yaml.tftpl", {

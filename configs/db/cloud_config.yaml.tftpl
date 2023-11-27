@@ -5,3 +5,13 @@ write_files:
     owner: root:root
     path: /opt/bingo/config.yaml
     permissions: '0644'
+  - encoding: b64
+    content: ${b64_bingo_prepare_db_sh}
+    owner: root:root
+    path: /etc/postgres/docker-entrypoint-initdb.d/01bingo_prepare_db.sh
+    permissions: '0755'
+  - encoding: b64
+    content: ${b64_fix_tables_keys_sql}
+    owner: root:root
+    path: /etc/postgres/docker-entrypoint-initdb.d/02fix_tables_keys.sql
+    permissions: '0644'

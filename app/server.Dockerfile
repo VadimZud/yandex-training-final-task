@@ -1,8 +1,8 @@
 FROM debian
 
-WORKDIR /
-
 RUN ["adduser",  "--system", "--group", "--no-create-home", "nonroot"]
+
+WORKDIR /usr/local/bin
 
 COPY bingo bingo
 
