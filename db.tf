@@ -49,9 +49,9 @@ resource "yandex_compute_instance" "db_instance" {
   allow_stopping_for_update = true
 
   resources {
-    cores         = 2
-    memory        = 1
-    core_fraction = 5
+    cores         = 4
+    memory        = 4
+    core_fraction = 20
   }
 
   scheduling_policy {
