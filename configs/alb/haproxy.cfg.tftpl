@@ -7,13 +7,28 @@ frontend prometheus
    http-request use-service prometheus-exporter if { path /metrics }
    no log
 
+cache long_dummy_cache
+  total-max-size 1
+  max-object-size 10000
+  max-age 60
+
 frontend bingo
   bind :80
+  bind :443 ssl crt /etc/ssl/certs/mysite.pem
+
+  http-request set-var(txn.path) path
+
+  acl need_cache var(txn.path) -i -m dir /long_dummy
+
+  http-request cache-use long_dummy_cache if need_cache
+  http-response add-header Cache-Control max-age=60 if need_cache
+  http-response cache-store long_dummy_cache if need_cache
+
   default_backend bingo_servers
 
 backend bingo_servers
   option httpchk GET /ping
-  http-check expect status 200  
+  http-check expect status 200
   %{~ for name, ip in servers ~}
   server ${name} ${ip}:80 check
   %{~ endfor ~}
