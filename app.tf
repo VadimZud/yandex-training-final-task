@@ -8,9 +8,15 @@ locals {
 
   b64_bingo_logrotate_config = filebase64("${path.module}/configs/app/logrotate.conf")
 
+  b64_bingo_restart = filebase64("${path.module}/configs/app/bingo-restart")
+
+  b64_cron_bingo_monitor = filebase64("${path.module}/configs/app/cron_bingo_monitor")
+
   app_cloud_config = templatefile("${path.module}/configs/app/cloud_config.yaml.tftpl", {
     b64_bingo_config           = local.b64_bingo_server_config
     b64_bingo_logrotate_config = local.b64_bingo_logrotate_config
+    b64_bingo_restart          = local.b64_bingo_restart
+    b64_cron_bingo_monitor     = local.b64_cron_bingo_monitor
   })
 
   app_docker_compose_config = templatefile("${path.module}/configs/app/docker-compose.yaml.tftpl", {

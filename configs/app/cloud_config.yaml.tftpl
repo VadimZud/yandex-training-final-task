@@ -14,6 +14,16 @@ write_files:
     owner: root:root
     path: /etc/logrotate.d/bingo
     permissions: '0644'
+  - encoding: b64
+    content: ${b64_bingo_restart}
+    owner: root:root
+    path: /usr/local/bin/bingo-restart
+    permissions: '0755'
+  - encoding: b64
+    content: ${b64_cron_bingo_monitor}
+    owner: root:root
+    path: /etc/cron.d/bingo_monitor
+    permissions: '0644'
 
 runcmd:
   - [mkdir, -p, /var/log/bingo]

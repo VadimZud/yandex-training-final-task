@@ -1,0 +1,2 @@
+#!/bin/sh
+test $(curl -s -w "%{http_code}" -o /dev/null localhost/ping) = "200" || docker restart bingo-server
