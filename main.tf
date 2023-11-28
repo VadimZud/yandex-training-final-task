@@ -19,6 +19,10 @@ variable "zone" {
   type = string
 }
 
+variable "dns_name" {
+  type = string
+}
+
 variable "sa_prefix" {
   type    = string
   default = ""

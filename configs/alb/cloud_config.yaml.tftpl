@@ -10,3 +10,10 @@ write_files:
     owner: root:root
     path: /etc/yandex/unified_agent.yml
     permissions: '0644'
+  - encoding: b64
+    content: ${b64_cert_pem}
+    path: /etc/haproxy/cert.pem
+    permissions: '0600'
+
+runcmd:
+  - [chown, '99:99', /etc/haproxy/cert.pem]

@@ -14,14 +14,14 @@ cache long_dummy_cache
 
 frontend bingo
   bind :80
-  bind :443 ssl crt /etc/ssl/certs/mysite.pem
+  bind :443 ssl crt /usr/local/etc/haproxy/cert.pem
 
   http-request set-var(txn.path) path
 
   acl need_cache var(txn.path) -i -m dir /long_dummy
 
   http-request cache-use long_dummy_cache if need_cache
-  http-response add-header Cache-Control max-age=60 if need_cache
+  http-response add-header Cache-Control max-age=60 if { res.hdr_cnt("Cache-Control") eq 0 } need_cache
   http-response cache-store long_dummy_cache if need_cache
 
   default_backend bingo_servers
