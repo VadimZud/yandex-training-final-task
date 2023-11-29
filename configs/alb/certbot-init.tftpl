@@ -1,0 +1,23 @@
+#!/bin/bash
+
+email=$1
+
+if [[ -n "$email" ]]; then
+   email_arg="--email $email"
+fi
+
+docker run -it --rm --name certbot \
+            -v "/etc/letsencrypt:/etc/letsencrypt" \
+            -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
+            --net coi_haproxy --ip '172.24.0.11' \
+            certbot/certbot certonly --standalone \
+            -d ${dns_name} $email_arg \
+            --non-interactive --agree-tos 
+
+cat /etc/letsencrypt/live/${dns_name}/fullchain.pem \
+    /etc/letsencrypt/live/${dns_name}/privkey.pem > /etc/haproxy/cert.pem
+
+docker exec -it haproxy pkill -HUP haproxy
+
+ln -s /usr/local/bin/certbot-renew /etc/cron.monthly
+

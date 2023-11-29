@@ -14,6 +14,16 @@ write_files:
     content: ${b64_cert_pem}
     path: /etc/haproxy/cert.pem
     permissions: '0600'
+  - encoding: b64
+    content: ${b64_certbot_init}
+    owner: root:root
+    path: /usr/local/bin/certbot-init
+    permissions: '0755'
+  - encoding: b64
+    content: ${b64_certbot_renew}
+    owner: root:root
+    path: /usr/local/bin/certbot-renew
+    permissions: '0755'
 
 runcmd:
   - [chown, '99:99', /etc/haproxy/cert.pem]

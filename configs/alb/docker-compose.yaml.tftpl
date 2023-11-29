@@ -1,14 +1,18 @@
 services:
   haproxy:
     container_name: haproxy
-    image: haproxy
+    image: haproxytech/haproxy-alpine-quic
     restart: always
     volumes:
       - /etc/haproxy:/usr/local/etc/haproxy
     ports:
       - "80:80"
       - "443:443"
+      - "443:443/udp"
       - "9090:9090"
+    networks:
+      haproxy:
+        ipv4_address: 172.24.0.10
 
   unified_agent:
     container_name: unified_agent
@@ -20,3 +24,14 @@ services:
       - /etc/yandex/unified_agent.yml:/etc/yandex/unified_agent/conf.d/config.yml
     environment:
       FOLDER_ID: "${YC_FOLDER_ID}"
+    networks:
+      haproxy:
+        ipv4_address: 172.24.0.20
+
+networks:
+  haproxy:
+    driver: bridge
+    ipam:
+     config:
+       - subnet: 172.24.0.0/24
+         gateway: 172.24.0.1

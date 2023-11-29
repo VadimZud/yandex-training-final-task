@@ -30,10 +30,20 @@ locals {
 
   b64_cert_pem = base64encode("${tls_private_key.bingo.private_key_pem}${tls_self_signed_cert.bingo.cert_pem}")
 
+  b64_certbot_init = base64encode(templatefile("${path.module}/configs/alb/certbot-init.tftpl", {
+    dns_name = var.dns_name
+  }))
+
+  b64_certbot_renew = base64encode(templatefile("${path.module}/configs/alb/certbot-renew.tftpl", {
+    dns_name = var.dns_name
+  }))
+
   alb_cloud_config = templatefile("${path.module}/configs/alb/cloud_config.yaml.tftpl", {
     b64_haproxy_config       = local.b64_haproxy_config
     b64_unified_agent_config = local.b64_alb_unified_agent_config
     b64_cert_pem             = local.b64_cert_pem
+    b64_certbot_init         = local.b64_certbot_init
+    b64_certbot_renew        = local.b64_certbot_renew
   })
 
   alb_docker_compose_config = templatefile("${path.module}/configs/alb/docker-compose.yaml.tftpl", {

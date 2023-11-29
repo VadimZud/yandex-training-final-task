@@ -1,0 +1,13 @@
+#!/bin/bash
+
+docker run -it --rm --name certbot \
+            -v "/etc/letsencrypt:/etc/letsencrypt" \
+            -v "/var/lib/letsencrypt:/var/lib/letsencrypt" \
+            --net coi_haproxy --ip '172.24.0.11' \
+            certbot/certbot renew --force-renewal
+
+cat /etc/letsencrypt/live/${dns_name}/fullchain.pem \
+    /etc/letsencrypt/live/${dns_name}/privkey.pem > /etc/haproxy/cert.pem
+
+docker exec -it haproxy pkill -HUP haproxy
+

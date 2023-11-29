@@ -15,6 +15,7 @@ cache long_dummy_cache
 frontend bingo
   bind :80
   bind :443 ssl crt /usr/local/etc/haproxy/cert.pem
+  bind quic4@172.24.0.10:443 ssl crt /usr/local/etc/haproxy/cert.pem
 
   http-request set-var(txn.path) path
 
@@ -24,7 +25,13 @@ frontend bingo
   http-response add-header Cache-Control max-age=60 if { res.hdr_cnt("Cache-Control") eq 0 } need_cache
   http-response cache-store long_dummy_cache if need_cache
 
+  http-response add-header Alt-Svc 'h3=":443"; ma=2592000,h3-29=":443"; ma=2592000'
+
+  use_backend certbot if { path_beg -i /.well-known/acme-challenge/ }
   default_backend bingo_servers
+
+backend certbot
+  server certbot 172.24.0.11:80
 
 backend bingo_servers
   option httpchk GET /ping
