@@ -11,3 +11,7 @@ resource "yandex_container_registry" "docker_registry" {
     interpreter = ["/bin/sh"]
   }
 }
+
+output "registry_id" {
+  value = yandex_container_registry.docker_registry.id
+}

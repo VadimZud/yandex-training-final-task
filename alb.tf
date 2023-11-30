@@ -109,6 +109,6 @@ resource "yandex_compute_instance" "alb_instance" {
   }
 }
 
-output "alb_ip" {
+output "service_ip" {
   value = yandex_compute_instance.alb_instance.network_interface[0].nat_ip_address
 }
