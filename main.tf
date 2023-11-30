@@ -8,45 +8,59 @@ terraform {
 }
 
 variable "cloud_id" {
-  type = string
+  type        = string
+  description = "Yandex Cloud cloud id"
 }
 
 variable "folder_id" {
-  type = string
+  type        = string
+  description = "Yandex Cloud folder id"
 }
 
 variable "zone" {
-  type = string
+  type        = string
+  description = "Yandex Cloud availability zone"
+}
+
+variable "token" {
+  type        = string
+  description = "Yandex Cloud IAM token"
 }
 
 variable "dns_name" {
-  type = string
+  type        = string
+  description = "service DNS name (for ssl certificate generation)"
 }
 
 variable "sa_prefix" {
-  type    = string
-  default = ""
+  type        = string
+  default     = ""
+  description = "prefix for created service accounts"
 }
 
 variable "db_user" {
-  type    = string
-  default = "bingo"
+  type        = string
+  default     = "bingo"
+  description = "Postgresql DB user"
 }
 
 variable "db_name" {
-  type    = string
-  default = "bingo"
+  type        = string
+  default     = "bingo"
+  description = "Postgresql DB name"
 }
 
 variable "ssh_key" {
-  type    = string
-  default = "~/.ssh/id_rsa.pub"
+  type        = string
+  default     = "~/.ssh/id_rsa.pub"
+  description = "SSH public key path"
 }
 
 provider "yandex" {
   cloud_id  = var.cloud_id
   folder_id = var.folder_id
   zone      = var.zone
+  token     = var.token
 }
 
 data "yandex_compute_image" "container_optimized_image" {
