@@ -85,3 +85,7 @@ resource "yandex_compute_instance" "db_instance" {
     ignore_changes = [boot_disk[0].initialize_params[0].image_id]
   }
 }
+
+output "db_ip" {
+  value = yandex_compute_instance.db_instance.network_interface[0].nat_ip_address
+}
